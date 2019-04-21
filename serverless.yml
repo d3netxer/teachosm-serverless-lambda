@@ -1,0 +1,40 @@
+# serverless.yml
+
+service: teachosm-serverless-lambda
+
+plugins:
+  #- serverless-dynamodb-local
+  #- serverless-offline #serverless-offline needs to be last in the list
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: us-east-1
+
+functions:
+  app:
+    handler: index.handler
+    events:
+      - http: 
+            path: /
+            method: any
+      - http: 
+            path: '{proxy+}'
+            method: any
+  getUser:
+    handler: index.handler
+    events:
+      - http: 
+            path: '/users/{proxy+}'
+            method: get
+  createUser:
+    handler: index.handler
+    events:
+      - http: 
+            path: /users
+            method: post
+            cors: true
+
+
+
