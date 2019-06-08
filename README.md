@@ -8,8 +8,6 @@ This repo contains a collection of services that process project submissions on 
 
 - aws-commit-to-github: improve by creating a new branch for every new posting
 
-- serverlessS3Upload: create a function to upload the content
-
 
 ## TeachOSM submit project steps:
 
