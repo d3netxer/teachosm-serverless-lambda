@@ -45,7 +45,7 @@ exports.functionOne = function(event, context) {
 
     // github info
     var user = 'GeoSurge';
-    var password = '4c193fd2cae24d6fef5092a6772e926277e4861f';
+    var password = 'oauth_token';
     //var repo = 'https://github.com/GeoSurge/teachosm';
     //var repo = 'https://api.github.com/repos/GeoSurge/teachosm';
     var repo = 'teachosm';
