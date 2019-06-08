@@ -30,6 +30,7 @@ This repo contains a collection of services that process project submissions on 
 
 sample metadata submission:
 
+```
 username: test_osm_user
 title: "Field Mapping Supplies"
 description: "This is part of the second lesson of the course where we outline field mapping supply checklist"
@@ -44,9 +45,11 @@ tags: [population_migration,political_organization_of_space,gis]
 project_pic: compass_20190501.png
 project_file: field_mapping_supplies_20190501.doc
 youtube_link: none
+```
 
 in JSON:
 
+```
 {
   "username": "test_osm_user",
   "title": "Field Mapping Supplies",
@@ -63,9 +66,11 @@ in JSON:
   "project_file": "field_mapping_supplies_20190501.doc",
   "youtube_link": "none"
 }
+```
 
 in yaml:
 
+```
 ---
   username: "test_osm_user"
   title: "Field Mapping Supplies"
@@ -87,7 +92,7 @@ in yaml:
   project_pic: "compass_20190501.png"
   project_file: "field_mapping_supplies_20190501.doc"
   youtube_link: "none"
-
+```
 
 ## extra tips
 
