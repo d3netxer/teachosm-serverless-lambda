@@ -9,14 +9,26 @@ provider:
       Action:
         - "s3:*"
       Resource: "arn:aws:s3:::teachosm-project-pics/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::teachosm-project-content/*"
+
 
 # Expose function to public API for POST requests.
 functions:
-  requestUploadURL:
-    handler: handler.requestUploadURL
+  requestUploadURL_pics:
+    handler: handler.requestUploadURL_pics
     events:
       - http:
-          path: requestUploadURL
+          path: requestUploadURL_pics
+          method: post
+          cors: true
+  requestUploadURL_content:
+    handler: handler.requestUploadURL_content
+    events:
+      - http:
+          path: requestUploadURL_content
           method: post
           cors: true
 

@@ -3,7 +3,7 @@ service: postprocess-teachosm-content
 frameworkVersion: ">=1.1.0"
 
 custom:
-  bucket: teachosm-content
+  bucket: teachosm-project-content
 
 provider:
   name: aws
