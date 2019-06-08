@@ -1,5 +1,5 @@
 {
-  "name": "teachosm-serverless-lambda",
+  "name": "convert-post-request-to-yaml",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,12 +10,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.263.1",
+    "aws-sdk": "^2.7.9",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "json2yaml": "^1.1.0",
+    "promise": "^8.0.3",
     "request": "^2.87.0",
-    "serverless-http": "^1.6.0",
-    "uuid": "^3.3.2"
+    "serverless-http": "^1.6.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^4.9.4"
   }
 }

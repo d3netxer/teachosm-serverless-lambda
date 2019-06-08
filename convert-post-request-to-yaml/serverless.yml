@@ -1,0 +1,57 @@
+# serverless.yml
+
+service: convert-post-request-to-yaml
+
+plugins:
+  - serverless-offline #serverless-offline needs to be last in the list
+
+custom:
+  bucket: teachosm-project-posts
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: us-east-1
+  # Provide permissions for this service to manipulate S3.
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::teachosm-project-posts/*"
+
+functions:
+  app:
+    handler: index.handler
+    events:
+      - http: 
+            path: /
+            method: any
+      - http: 
+            path: '{proxy+}'
+            method: any
+  getPost:
+    handler: index.handler
+    events:
+      - http: 
+            path: '/posts/{proxy+}'
+            method: get
+  createPost:
+    handler: index.handler
+    events:
+      - http: 
+            path: /posts
+            method: post
+            cors: true
+  #when I do an sls deploy I get the following:
+  #teachosm-project-posts already exists.   
+  #seems like can't subscribe to events of existing bucket: https://github.com/serverless/serverless/issues/2154     
+  #postprocess:
+    #handler: handler.postprocess
+    #events:
+      #- s3:
+          #bucket: ${self:custom.bucket}
+          #event: s3:ObjectCreated:*
+
+
+
