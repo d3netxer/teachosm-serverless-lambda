@@ -78,7 +78,7 @@ module.exports.requestUploadURL_content = (event, context, callback) => {
 
   // Assemble a dictionary of parameters to hand to S3: the S3 bucket name, the file name, the file type, and permissions.  Other paramters like expiration can be specified here.  See the documentation for this method for more details.
   var s3Params = {
-    Bucket: 'teachosm-project-content',
+    Bucket: 'lambda-libreoffice-teachosm-demo',
     //Key:  params.name,
     Key:  params.name,
     ACL: 'public-read',

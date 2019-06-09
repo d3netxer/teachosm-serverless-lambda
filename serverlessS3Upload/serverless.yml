@@ -12,7 +12,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::teachosm-project-content/*"
+      Resource: "arn:aws:s3:::lambda-libreoffice-teachosm-demo/*"
 
 
 # Expose function to public API for POST requests.

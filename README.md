@@ -4,8 +4,6 @@ This repo contains a collection of services that process project submissions on 
 
 ## development to-do list
 
-- aws-node-upload-to-s3-and-postprocess: trigger the libre-office lambda function when a new file upload trigger occurs
-
 - aws-commit-to-github: improve by creating a new branch for every new posting
 
 
@@ -17,12 +15,12 @@ This repo contains a collection of services that process project submissions on 
 
 -a POST request is sent for the content:
   -before the POST request the form appends filename with datetime
-  -serverlessS3Upload will save file in S3 bucket
-  -when file saved in S3 bucket, this will kick off the libre-office document conversion using the aws-node-upload-to-s3-and-postprocess lambda function
+  -serverlessS3Upload will save file in S3 bucket by returning back a signedURL.
+  -form will then upload content. When the content is uploaded, the promise in the form will be a success, then the form will invoke the libre-office document conversion?
 
 -a POST request is sent for the project pic:
   -before the POST request the form appends filename with datetime
-  -serverlessS3Upload will save file in S3 bucket
+  -serverlessS3Upload will save file in S3 bucket by returning back a signedURL, then form will upload pic.
 
 -a POST request is sent with the metadata, fields will include the project pic filename with datetime appended and the project_file file name with the datetime appended. The TeachOSM Lambda function will convert the data into yaml and then saved in a S3 bucket. Another Lambda function will then make a github pull request with the metadata form (markdown with yaml front-matter).
 
@@ -93,6 +91,16 @@ in yaml:
   project_file: "field_mapping_supplies_20190501.doc"
   youtube_link: "none"
 ```
+
+### Serverless-LibreOffice
+
+Serverless LibreOffice was installed seperately following these instructions: https://github.com/vladgolubev/serverless-libreoffice/blob/master/STEP_BY_STEP.md
+
+This included manually creating an S3 bucket, downloading the compiled LibreOffice, creating an IAM role and policy, and creating a node.js lambda function.
+
+#### 
+
+- The libreoffice-convert-to-pdf lambda function is triggered when a new file is uploaded (into the lambda-libreoffice-teachosm-demo s3 bucket). This trigger was created by manually an event to the lambda function whenever a new object is created. The libreoffice-convert-to-pdf output the files into another bucket (teachosm-project-content) so that the trigger does not activate again.
 
 ## extra tips
 
