@@ -38,7 +38,7 @@ app.get('/posts/:Id', function (req, res) {
   //console.log(req);
 })
 
-async function createPullRequest(buf, { owner, repo, title, body, base, head, changes }) {
+async function createPullRequest(req, res, buf, { owner, repo, title, body, base, head, changes }) {
 
   var currentDate = new Date();
 
@@ -121,6 +121,8 @@ async function createPullRequest(buf, { owner, repo, title, body, base, head, ch
 
   console.log('finished');
 
+  res.send('Success returned');
+
 }
 
 function verifyreCaptcha(req, callback) {
@@ -188,7 +190,7 @@ app.post('/posts', function (req, res) {
   putObjectPromise.then(function(data) {
     console.log('Success, now do a github commit');
 
-    createPullRequest(buf, {
+    createPullRequest(req, res, buf, {
       owner: 'GeoSurge',
       repo: 'teachosm',
       title: 'pull request via a TeachOSM post',
@@ -202,7 +204,6 @@ app.post('/posts', function (req, res) {
       }
     })
 
-    //res.send('Success returned')
   }).catch(function(err) {
     console.log(err);
     res.send('error returned')
