@@ -3,11 +3,11 @@ service: aws-commit-to-github
 frameworkVersion: ">=1.1.0"
 
 plugins:
-  - serverless-offline-lambda
+  - serverless-offline-direct-lambda
   - serverless-offline
 
-custom:
-  bucket: teachosm-project-posts
+#custom:
+#  bucket: teachosm-project-posts
 
 provider:
   name: aws
@@ -20,9 +20,9 @@ provider:
 
 # s3 bucket cannot be created beforehand, due to cloudformation limitation
 functions:
-  functionOne:
-    handler: handler.functionOne
-    events:
-      - s3:
-          bucket: ${self:custom.bucket}
-          event: s3:ObjectCreated:*
+  githubCommit:
+    handler: index.handler
+    #events:
+    #  - s3:
+    #      bucket: ${self:custom.bucket}
+    #      event: s3:ObjectCreated:*
