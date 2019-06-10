@@ -16,6 +16,12 @@ var YAML = require('json2yaml');
 
 var Promise = require('promise');
 
+require('dotenv').config();
+
+const Octokit = require('@octokit/rest')
+
+var base64 = require('base-64');
+
 var s3 = new AWS.S3();
 
 app.use(cors())
@@ -32,6 +38,90 @@ app.get('/posts/:Id', function (req, res) {
   //console.log(req);
 })
 
+async function createPullRequest(buf, { owner, repo, title, body, base, head, changes }) {
+
+  var currentDate = new Date();
+
+  var localDateTime = currentDate.getFullYear() +
+           "_" +
+           (("0" + (currentDate.getMonth() + 1)).slice(-2)) +
+           "_" +
+           (("0" + (currentDate.getDate())).slice(-2));
+
+  console.log('print date');
+  console.log(localDateTime);
+
+  console.log('print file name');
+  console.log(changes.files);
+
+
+  var fileName;
+
+  var propValue;
+  for(var propName in changes.files) {
+      propValue = changes.files[propName]
+      fileName = propValue;
+      console.log(propName,propValue);
+  }
+
+  const octokit = new Octokit({
+      auth: process.env.GITHUB_KEY
+    });
+
+  let response = await octokit.repos.get({ owner, repo })
+
+  if (!base) {
+    base = response.data.default_branch
+  }
+
+  console.log('getRef');
+
+  let reference = await octokit.git.getRef({
+            owner,
+            repo,
+            ref: 'heads/master'
+        })
+
+  console.log('print Ref');
+  console.log(reference.data.object.sha);
+
+  sha_latest_commit=reference.data.object.sha
+
+  var ref = 'refs/heads/'
+  //var branch = 'new_branch3'
+  var branch = fileName.split(".")[0];
+
+  console.log('print branch');
+  console.log(branch);
+
+  createRef_response = await octokit.git.createRef({
+    owner,
+    repo,
+    ref: ref+branch,
+    sha: sha_latest_commit
+  })
+
+  console.log('print createRef_response');
+  console.log(createRef_response);
+
+
+  console.log('createFile');
+  //will get an Invalid request if file already exists
+
+
+  response = await octokit.repos.createFile({
+    owner,
+    repo,
+    branch: branch,
+    path: fileName,
+    message: 'commiting a new post via TeachOSM site',
+    //content: base64.encode('new content7')
+    content: base64.encode(buf)
+  })
+
+  console.log('finished');
+
+}
 
 function verifyreCaptcha(req, callback) {
 
@@ -74,7 +164,12 @@ app.post('/posts', function (req, res) {
 
   console.log('file name');
   const Id = uuidV1();
-  keyname = 'post_' + req.body.username + '_' + Id + '.md';
+  var keyname = 'post_' + req.body.username + '_' + Id + '.md';
+
+  var fileName = keyname.split(".")[0];
+
+  console.log('print fileName');
+  console.log(fileName);
 
   ymlText2 = YAML.stringify(req.body)
 
@@ -92,6 +187,21 @@ app.post('/posts', function (req, res) {
 
   putObjectPromise.then(function(data) {
     console.log('Success, now do a github commit');
+
+    createPullRequest(buf, {
+      owner: 'GeoSurge',
+      repo: 'teachosm',
+      title: 'pull request via a TeachOSM post',
+      body: 'pull request via a TeachOSM post',
+      head: 'test',
+      changes: {
+        files: {
+          file: fileName
+        },
+        commit: 'creating a new post'
+      }
+    })
+
     //res.send('Success returned')
   }).catch(function(err) {
     console.log(err);

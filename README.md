@@ -4,8 +4,7 @@ This repo contains a collection of services that process project submissions on 
 
 ## development to-do list
 
-- aws-commit-to-github: improve by creating a new branch for every new posting
-
+- figure out in which folder in the TeachOSM the project posts live
 
 ## TeachOSM submit project steps:
 
