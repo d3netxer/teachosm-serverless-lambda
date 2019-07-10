@@ -67,3 +67,18 @@ then use the returned signed url in the following request:
 
 curl --upload-file sample_text.txt 'https://teachosm-project-content.s3.amazonaws.com/sample_text.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAY644J3URQPR3QE74%2F20190608%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20190608T223434Z&X-Amz-Expires=900&X-Amz-Security-Token=AgoJb3JpZ2luX2VjED8aCXVzLWVhc3QtMSJHMEUCIFs%2F1Cv%2F5ja6mx8TuV1x6xKinHQ1eSVodugml4xGSu5VAiEA1djwWN1ASZTVhjfMWKb7tQXcntXxTXzTx%2B2g1TnDZ2wqqAIIaBABGgw2MTYxMTg3MzgyMTEiDErh8B8idmWGk%2BMr5CqFAibOlwU0PSkLlXzj4K7JdODU1umcz%2BXSEYpqAh9r7MD4dqhYs%2FZw%2F6l9lNePwPhCkHCypzCl291tDdr4tq0y62yO0GzgRY2opfW%2BNapfZROytkXBlxnx40DKL4ZB9q8LSdSdO31yTGrMwToxevoWNnx%2Bmr%2BCGpdF9QEo27Q5s5P1lXhutVGLtcLhlUQb4%2BELVrcHTvATu0NuJWqDNcZQa1R0NVSDCztdATPMmZJaQFSD0TEeTVWNScOpQrDhIRTv50VgHHVEDsCzaN1jj%2BpUgAf7Fhlr0ejTGK7cc9GtWBNRGFtiZzKgkwxEfFoTZEM4lmMJ17MXj0JdjRtejZ83QWgRPU1iZzD57%2FDnBTq0AeGADMnmIiqTe95rDJpg2s1DzNkM6eftGUGyvVa4VCA5FC2pAa2i7ntZWLzQSg%2FZCFllaZKTZCtdeQl8qCTIEO2rpskcr1ZRxmhn67O5En6KfX9m8Fq6AckVffiZ0IaaLzjH53aNXHygHpRpTBsKCYwHwrVo7KpI4ky20pou3ZrfK%2FGfMUu3%2BUIMSL%2BQzEo1tyIm8c4oviGayBNDTm1S6hhV6Pl%2BrXoJtafH9ezh6rq%2BDF49dg%3D%3D&X-Amz-Signature=1466c83bea3474d62fa89c41790a1358899d84cd473e923f71fe1e54a47cdeb3&X-Amz-SignedHeaders=host%3Bx-amz-acl&x-amz-acl=public-read'
 
+## Extra Tips
+In your S3 CORS configuration editor, make sure you have the following to prevent CORS same-origin-policy errors:
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+<CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedMethod>POST</AllowedMethod>
+    <AllowedMethod>HEAD</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+</CORSRule>
+</CORSConfiguration>
+```
