@@ -113,10 +113,20 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
     owner,
     repo,
     branch: branch,
-    path: fileName,
+    path: 'collections/_projects/'+fileName,
     message: 'commiting a new post via TeachOSM site',
     //content: base64.encode('new content7')
     content: base64.encode(buf)
+  })
+
+  //new code
+
+  await octokit.pulls.create({
+    owner,
+    repo,
+    title: 'new project submission pull request: ' + branch,
+    head: branch,
+    base: 'master'
   })
 
   console.log('finished');
@@ -166,7 +176,8 @@ app.post('/posts', function (req, res) {
 
   console.log('file name');
   const Id = uuidV1();
-  var keyname = 'post_' + req.body.username + '_' + Id + '.md';
+  //var keyname = 'post_' + req.body.username + '_' + Id + '.md';
+  var keyname = req.body.url + '.md';
 
   var fileName = keyname.split(".")[0];
 
@@ -174,6 +185,7 @@ app.post('/posts', function (req, res) {
   console.log(fileName);
 
   ymlText2 = YAML.stringify(req.body)
+  ymlText2 = ymlText2+'\n---'
 
   console.log('log req body2');
   console.log(ymlText2);
@@ -198,7 +210,7 @@ app.post('/posts', function (req, res) {
       head: 'test',
       changes: {
         files: {
-          file: fileName
+          file: keyname
         },
         commit: 'creating a new post'
       }
