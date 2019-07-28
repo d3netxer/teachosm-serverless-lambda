@@ -9,7 +9,11 @@ execSync(`curl https://s3.amazonaws.com/lambda-libreoffice-teachosm-demo/lo.tar.
 const s3_input = new S3({params: {Bucket: 'lambda-libreoffice-teachosm-demo'}});
 const s3_output = new S3({params: {Bucket: 'teachosm-project-content'}});
 
+//converting to pdf
 const convertCommand = `/tmp/instdir/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to pdf --outdir /tmp`;
+
+//converting to docx
+const convertCommand_docx = `/tmp/instdir/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to docx --outdir /tmp`;
 
 //exports.handler = async ({filename}) => {
 exports.handler = async (event) => {
@@ -32,5 +36,19 @@ exports.handler = async (event) => {
     })
     .promise();
 
-  return `https://s3.amazonaws.com/lambda-libreoffice-teachosm-demo/${outputFilename}`;
+  //doing for docx
+  execSync(`cd /tmp && ${convertCommand_docx} ${filename}`);
+
+  const outputFilename2 = `${parse(filename).name}.docx`;
+  const outputFileBuffer2 = readFileSync(`/tmp/${outputFilename2}`);
+
+  await s3_output
+    .upload({
+      Key: outputFilename2, Body: outputFileBuffer2,
+      ACL: 'public-read', ContentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    })
+    .promise();
+
+  //return `https://s3.amazonaws.com/lambda-libreoffice-teachosm-demo/${outputFilename}`;
+  return 'complete'
 };
