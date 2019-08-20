@@ -61,14 +61,14 @@ This included manually creating an S3 bucket, downloading the compiled LibreOffi
 
 Each folder represents a different function, which is made up of one of more services. Within each folder do an 'npm install'. Also install the Serverless Framework on your computer.
 
-### how to run locally
-```
-sls offline start
-```
-
 ### how to deploy
 ```
 sls deploy
+```
+
+### how to run locally
+```
+sls offline start
 ```
 
 ### how to add a dependency example:

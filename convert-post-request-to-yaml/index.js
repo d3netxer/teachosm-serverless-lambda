@@ -148,8 +148,11 @@ function verifyreCaptcha(req, callback) {
     callback(false);
   }
 
+  //TeachOSM
+  //site key: 6LdylbMUAAAAAHuUEVFVmstJkdafdAG9Z0LB6ziN
+
   // Put your secret key here.
-  var secretKey = "6LdUIGUUAAAAABKqnfjw0z2YgU3TK5CJbJzmbXQn";
+  var secretKey = process.env.CAPTCHA_SECRET;
 
   // req.connection.remoteAddress will provide IP address of connected user.
   var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
@@ -172,53 +175,56 @@ function verifyreCaptcha(req, callback) {
 // Create form endpoint
 app.post('/posts', function (req, res) {
 
-  console.log('s3 upload function begins');
+  verifyreCaptcha(req, function(success) {
 
-  console.log('file name');
-  const Id = uuidV1();
-  //var keyname = 'post_' + req.body.username + '_' + Id + '.md';
-  var keyname = req.body.url + '.md';
+          console.log('s3 upload function begins');
 
-  var fileName = keyname.split(".")[0];
+          console.log('file name');
+          const Id = uuidV1();
+          //var keyname = 'post_' + req.body.username + '_' + Id + '.md';
+          var keyname = req.body.url + '.md';
 
-  console.log('print fileName');
-  console.log(fileName);
+          var fileName = keyname.split(".")[0];
 
-  ymlText2 = YAML.stringify(req.body)
-  ymlText2 = ymlText2+'\n---'
+          console.log('print fileName');
+          console.log(fileName);
 
-  console.log('log req body2');
-  console.log(ymlText2);
+          ymlText2 = YAML.stringify(req.body)
+          ymlText2 = ymlText2+'\n---'
 
-  //All requests made through the SDK are asynchronous
+          console.log('log req body2');
+          console.log(ymlText2);
 
-  // Setting URL and headers for request
-  var buf = new Buffer(ymlText2, "utf-8");
-  const params = { Bucket: 'teachosm-project-posts', Key: keyname, Body: buf, ACL: 'public-read' };
+          //All requests made through the SDK are asynchronous
+
+          // Setting URL and headers for request
+          var buf = new Buffer(ymlText2, "utf-8");
+          const params = { Bucket: 'teachosm-project-posts', Key: keyname, Body: buf, ACL: 'public-read' };
 
 
-  var putObjectPromise = s3.putObject(params).promise();
+          var putObjectPromise = s3.putObject(params).promise();
 
-  putObjectPromise.then(function(data) {
-    console.log('Success, now do a github commit');
+          putObjectPromise.then(function(data) {
+            console.log('Success, now do a github commit');
 
-    createPullRequest(req, res, buf, {
-      owner: 'GeoSurge',
-      repo: 'teachosm',
-      title: 'pull request via a TeachOSM post',
-      body: 'pull request via a TeachOSM post',
-      head: 'test',
-      changes: {
-        files: {
-          file: keyname
-        },
-        commit: 'creating a new post'
-      }
-    })
+            createPullRequest(req, res, buf, {
+              owner: 'GeoSurge',
+              repo: 'teachosm',
+              title: 'pull request via a TeachOSM post',
+              body: 'pull request via a TeachOSM post',
+              head: 'test',
+              changes: {
+                files: {
+                  file: keyname
+                },
+                commit: 'creating a new post'
+              }
+            })
 
-  }).catch(function(err) {
-    console.log(err);
-    res.send('error returned')
+          }).catch(function(err) {
+            console.log(err);
+            res.send('error returned')
+          });
   });
 
 })
