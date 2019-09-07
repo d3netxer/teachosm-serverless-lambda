@@ -55,7 +55,7 @@ This included manually creating an S3 bucket, downloading the compiled LibreOffi
 
 #### 
 
-- The libreoffice-convert-to-pdf lambda function is triggered when a new file is uploaded (into the lambda-libreoffice-teachosm-demo s3 bucket). This trigger was created by manually an event to the lambda function whenever a new object is created. The libreoffice-convert-to-pdf output the files into another bucket (teachosm-project-content) so that the trigger does not activate again.
+- The *libreoffice-convert-to-pdf* lambda function is triggered when a new file is uploaded (into the lambda-libreoffice-teachosm-demo s3 bucket). This trigger was created by manually an event to the lambda function whenever a new object is created. The libreoffice-convert-to-pdf output the files into another bucket (teachosm-project-content) so that the trigger does not activate again.
 
 ## extra tips
 
