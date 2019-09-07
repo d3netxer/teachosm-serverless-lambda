@@ -2,93 +2,49 @@
 
 This repo contains a collection of services that process project submissions on the TeachOSM website.
 
-## development to-do list
-
-- figure out in which folder in the TeachOSM the project posts live
-
 ## TeachOSM submit project steps:
 
-1. User hits submit form button and Lambda processes Google Captcha
+1. User hits submit form button and the Lambda processes Google Captcha
 
 3. If Google Captcha sucessful, TeachOSM project page will send up to 3 post requests:
 
--a POST request is sent for the content:
+-a POST request is sent with the content:
   -before the POST request the form appends filename with datetime
-  -serverlessS3Upload will save file in S3 bucket by returning back a signedURL.
+  -The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL.
   -form will then upload content. When the content is uploaded, the promise in the form will be a success, then the form will invoke the libre-office document conversion?
 
--a POST request is sent for the project pic:
+-a POST request is sent with the project pic:
   -before the POST request the form appends filename with datetime
-  -serverlessS3Upload will save file in S3 bucket by returning back a signedURL, then form will upload pic.
+  -The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL, then form will upload pic.
 
--a POST request is sent with the metadata, fields will include the project pic filename with datetime appended and the project_file file name with the datetime appended. The TeachOSM Lambda function will convert the data into yaml and then saved in a S3 bucket. Another Lambda function will then make a github pull request with the metadata form (markdown with yaml front-matter).
+-a POST request is sent with the metadata, fields will include the project pic filename with datetime appended and the project_file file name with the datetime appended. The **convert-post-request-to-yaml Lambda** function will convert the data into yaml and then save it in a S3 bucket. The this same Lambda function will then make a github pull request with the metadata (markdown with yaml front-matter).
 
 4. Potential feature: On TeachOSM site after successful submission, a message is sent to the user.
 
-sample metadata submission:
 
-```
-username: test_osm_user
-title: "Field Mapping Supplies"
-description: "This is part of the second lesson of the course where we outline field mapping supply checklist"
-audience: primary
-difficulty: beginner
-educator_prep_time: less_than_1_hour
-education_activity_duration: [local, environment, land_use]
-project_type: field_mapping
-group: "Centerville High School Field Mapping Class"
-group_sequence: 2
-tags: [population_migration,political_organization_of_space,gis]
-project_pic: compass_20190501.png
-project_file: field_mapping_supplies_20190501.doc
-youtube_link: none
-```
-
-in JSON:
+sample metadata submission in JSON:
 
 ```
 {
-  "username": "test_osm_user",
-  "title": "Field Mapping Supplies",
+  "title": "new test3 Field Mapping Supplies",
+  "subtitle": "Module 1 - Intro to field papers",
   "description": "This is part of the second lesson of the course where we outline field mapping supply checklist",
+  "author": "test_osm_user",
+  "date_posted": "2019-08-01",
+  "thumbnail": "compass_20190501.png",
+  "filename": "field_mapping_supplies_20190501.doc",
+  "type": "desktop",
   "audience": "primary",
   "difficulty": "beginner",
-  "educator_prep_time": "less_than_1_hour",
-  "education_activity_duration": ["local", "environment", "land_use"],
-  "project_type": "field_mapping",
+  "preparation_time": "one_hour",
+  "project_time": "two_to_four_hours",
   "group": "Centerville High School Field Mapping Class",
   "group_sequence": "1",
-  "tags": ["population_migration", "political_organization_of_space", "gis"],
-  "project_pic": "compass_20190501.png",
-  "project_file": "field_mapping_supplies_20190501.doc",
-  "youtube_link": "none"
+  "layout": "project",
+  "youtube_link": "none",
+  "url": "sample-title3",
+  "tags": ["population_migration", "political_organization_of_space", "gis"]
 }
-```
-
-in yaml:
-
-```
----
-  username: "test_osm_user"
-  title: "Field Mapping Supplies"
-  description: "This is part of the second lesson of the course where we outline field mapping supply checklist"
-  audience: "primary"
-  difficulty: "beginner"
-  educator_prep_time: "less_than_1_hour"
-  education_activity_duration: 
-    - "local"
-    - "environment"
-    - "land_use"
-  project_type: "field_mapping"
-  group: "Centerville High School Field Mapping Class"
-  group_sequence: "1"
-  tags: 
-    - "population_migration"
-    - "political_organization_of_space"
-    - "gis"
-  project_pic: "compass_20190501.png"
-  project_file: "field_mapping_supplies_20190501.doc"
-  youtube_link: "none"
 ```
 
 ### Serverless-LibreOffice
@@ -105,14 +61,14 @@ This included manually creating an S3 bucket, downloading the compiled LibreOffi
 
 Each folder represents a different function, which is made up of one of more services. Within each folder do an 'npm install'. Also install the Serverless Framework on your computer.
 
-### how to run locally
-```
-sls offline start
-```
-
 ### how to deploy
 ```
 sls deploy
+```
+
+### how to run locally
+```
+sls offline start
 ```
 
 ### how to add a dependency example:

@@ -11,6 +11,8 @@ var queryString = require('query-string');
 
 module.exports.requestUploadURL_pics = (event, context, callback) => {
 
+  console.log('print event pics');
+  console.log(event);
   console.log('print event headers');
   console.log(event.headers);
   console.log('print Content-Type');
@@ -57,6 +59,8 @@ module.exports.requestUploadURL_pics = (event, context, callback) => {
 
 module.exports.requestUploadURL_content = (event, context, callback) => {
 
+  console.log('print event content');
+  console.log(event);
   console.log('print event headers');
   console.log(event.headers);
   console.log('print Content-Type');
