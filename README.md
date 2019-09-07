@@ -6,7 +6,7 @@ This repo contains a collection of services that process project submissions on 
 
 1. User hits submit form button and the Lambda processes Google Captcha
 
-3. If Google Captcha sucessful, TeachOSM project page will send up to 3 post requests:
+3. If Google Captcha successful, TeachOSM project page will send up to 3 post requests:
 
 -a POST request is sent with the content:
   -before the POST request the form appends filename with datetime
