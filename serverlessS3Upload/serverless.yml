@@ -1,18 +1,21 @@
-service: imageUploadDemo
+service: image-upload
 
 provider:
   name: aws
   runtime: nodejs8.10
+  stage: prod
+  deploymentBucket:
+    name: teachosm-serverless-s3upload-deploy
   # Provide permissions for this service to manipulate S3.
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::teachosm-project-pics/*"
+      Resource: "arn:aws:s3:::teachosm-project-pics-deployed/*"
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::lambda-libreoffice-teachosm-demo/*"
+      Resource: "arn:aws:s3:::teachosm-libreoffice-deployed/*"
 
 
 # Expose function to public API for POST requests.
