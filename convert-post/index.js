@@ -199,7 +199,7 @@ app.post('/posts', function (req, res) {
 
           // Setting URL and headers for request
           var buf = new Buffer(ymlText2, "utf-8");
-          const params = { Bucket: 'teachosm-project-posts', Key: keyname, Body: buf, ACL: 'public-read' };
+          const params = { Bucket: process.env.PROJECT_POSTS_BUCKET + '-' + process.env.STAGE, Key: keyname, Body: buf, ACL: 'public-read' };
 
 
           var putObjectPromise = s3.putObject(params).promise();

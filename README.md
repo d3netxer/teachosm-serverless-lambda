@@ -1,3 +1,9 @@
+
+
+
+
+
+
 # teachosm-serverless-lambda
 
 This repo contains a collection of services that process project submissions on the TeachOSM website.
@@ -62,6 +68,15 @@ This included manually creating an S3 bucket, downloading the compiled LibreOffi
 Each folder represents a different function, which is made up of one of more services. Within each folder do an 'npm install'. Also install the Serverless Framework on your computer.
 
 ### how to deploy
+
+deploy in each directory
+
+ex.
+
+```
+sls deploy --aws-profile teachosm_deployer1 --stage personal
+```
+
 ```
 sls deploy
 ```

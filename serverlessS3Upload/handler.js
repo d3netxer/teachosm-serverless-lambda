@@ -3,6 +3,8 @@
 var AWS = require('aws-sdk');
 var queryString = require('query-string');
 
+require('dotenv').config();
+
 // Create new S3 instance to handle our request for a new upload URL.
   // using signatureVersion v4 allows authenticating inbound API requests to AWS services
   const s3 = new AWS.S3({
@@ -34,7 +36,7 @@ module.exports.requestUploadURL_pics = (event, context, callback) => {
 
   // Assemble a dictionary of parameters to hand to S3: the S3 bucket name, the file name, the file type, and permissions.  Other paramters like expiration can be specified here.  See the documentation for this method for more details.
   var s3Params = {
-    Bucket: 'teachosm-project-pics',
+    Bucket: process.env.CONTENT_UPLOADS_BUCKET + '-' + process.env.STAGE,
     //Key:  params.name,
     Key:  params.name,
     ACL: 'public-read',
@@ -82,7 +84,7 @@ module.exports.requestUploadURL_content = (event, context, callback) => {
 
   // Assemble a dictionary of parameters to hand to S3: the S3 bucket name, the file name, the file type, and permissions.  Other paramters like expiration can be specified here.  See the documentation for this method for more details.
   var s3Params = {
-    Bucket: 'lambda-libreoffice-teachosm-demo',
+    Bucket: process.env.CONTENT_UPLOADS_BUCKET + '-' + process.env.STAGE,
     //Key:  params.name,
     Key:  params.name,
     ACL: 'public-read',

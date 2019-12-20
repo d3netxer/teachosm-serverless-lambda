@@ -1,26 +1,27 @@
 # serverless.yml
 
-service: convert-post-request-to-yaml
+service: teachosm-geosurge-convert-post
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-offline #serverless-offline needs to be last in the list
 
 custom:
-  bucket: teachosm-project-posts-deployed
+  bucket: ${env:PROJECT_POSTS_BUCKET}-${env:STAGE}
 
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: prod
+  stage: ${env:STAGE}
   deploymentBucket:
-    name: convert-post-request-to-yaml-deploy
+    name: ${env:DEPLOYMENT_BUCKET}-${env:STAGE}
   region: us-east-1
   # Provide permissions for this service to manipulate S3.
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::teachosm-project-posts-deployed/*"
+      Resource: "arn:aws:s3:::${env:PROJECT_POSTS_BUCKET}-${env:STAGE}/*"
 
 functions:
   app:
