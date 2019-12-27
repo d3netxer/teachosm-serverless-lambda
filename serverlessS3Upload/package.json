@@ -1,8 +1,10 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.594.0",
+    "aws-sdk": "^2.596.0",
     "cors": "^2.8.5",
-    "query-string": "^4.3.2"
+    "query-string": "^4.3.2",
+    "serverless": "^1.60.4",
+    "serverless-offline": "^5.12.1"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
