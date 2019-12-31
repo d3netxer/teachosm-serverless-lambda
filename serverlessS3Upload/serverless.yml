@@ -1,18 +1,25 @@
-service: imageUploadDemo
+service: teachosm-geosurge-image-upload
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline #serverless-offline needs to be last in the list
 
 provider:
   name: aws
   runtime: nodejs8.10
+  stage: ${env:STAGE}
+  deploymentBucket:
+    name: teachosm-geosurge-serverless-s3upload-${env:STAGE}
   # Provide permissions for this service to manipulate S3.
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::teachosm-project-pics/*"
+      Resource: "arn:aws:s3:::${env:CONTENT_UPLOADS_BUCKET}-${env:STAGE}/*"
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::lambda-libreoffice-teachosm-demo/*"
+      Resource: "arn:aws:s3:::${env:PICS_UPLOADS_BUCKET}-${env:STAGE}/*"
 
 
 # Expose function to public API for POST requests.
@@ -32,22 +39,3 @@ functions:
           method: post
           cors: true
 
-# Give service access to the specific S3 bucket.
-# resources:
-#   Resources:
-#     UploadBucket:
-#       Type: AWS::S3::Bucket
-#       Properties:
-#         BucketName: teachosm-project-pics
-#         AccessControl: PublicRead
-#         CorsConfiguration:
-#           CorsRules:
-#           - AllowedMethods:
-#             - GET
-#             - PUT
-#             - POST
-#             - HEAD
-#             AllowedOrigins:
-#             - "*"
-#             AllowedHeaders:
-#             - "*"

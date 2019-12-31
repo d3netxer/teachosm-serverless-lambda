@@ -3,6 +3,8 @@
 var AWS = require('aws-sdk');
 var queryString = require('query-string');
 
+require('dotenv').config();
+
 // Create new S3 instance to handle our request for a new upload URL.
   // using signatureVersion v4 allows authenticating inbound API requests to AWS services
   const s3 = new AWS.S3({
@@ -11,11 +13,18 @@ var queryString = require('query-string');
 
 module.exports.requestUploadURL_pics = (event, context, callback) => {
 
+  // github.com/serverless/serverless/issues/2765
+  const headers = {};
+  for (const key in event.headers) {
+    headers[key.toLowerCase()] = event.headers[key];
+  }
+  event.headers = headers;
+
   console.log('print event pics');
   console.log(event);
   console.log('print event headers');
   console.log(event.headers);
-  console.log('print Content-Type');
+  console.log('print content-type');
   console.log(event.headers['content-type']);
 
   var contentType = event.headers['content-type'];
@@ -34,7 +43,7 @@ module.exports.requestUploadURL_pics = (event, context, callback) => {
 
   // Assemble a dictionary of parameters to hand to S3: the S3 bucket name, the file name, the file type, and permissions.  Other paramters like expiration can be specified here.  See the documentation for this method for more details.
   var s3Params = {
-    Bucket: 'teachosm-project-pics',
+    Bucket: process.env.PICS_UPLOADS_BUCKET + '-' + process.env.STAGE,
     //Key:  params.name,
     Key:  params.name,
     ACL: 'public-read',
@@ -59,11 +68,18 @@ module.exports.requestUploadURL_pics = (event, context, callback) => {
 
 module.exports.requestUploadURL_content = (event, context, callback) => {
 
+  // github.com/serverless/serverless/issues/2765
+  const headers = {};
+  for (const key in event.headers) {
+    headers[key.toLowerCase()] = event.headers[key];
+  }
+  event.headers = headers;
+
   console.log('print event content');
   console.log(event);
   console.log('print event headers');
   console.log(event.headers);
-  console.log('print Content-Type');
+  console.log('print content-type');
   console.log(event.headers['content-type']);
 
   var contentType = event.headers['content-type'];
@@ -82,7 +98,7 @@ module.exports.requestUploadURL_content = (event, context, callback) => {
 
   // Assemble a dictionary of parameters to hand to S3: the S3 bucket name, the file name, the file type, and permissions.  Other paramters like expiration can be specified here.  See the documentation for this method for more details.
   var s3Params = {
-    Bucket: 'lambda-libreoffice-teachosm-demo',
+    Bucket: process.env.CONTENT_UPLOADS_BUCKET + '-' + process.env.STAGE,
     //Key:  params.name,
     Key:  params.name,
     ACL: 'public-read',

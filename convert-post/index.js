@@ -80,7 +80,7 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
             owner,
             repo,
             ref: 'heads/master'
-        })
+        }).catch((err) => { console.error(err); });
 
   console.log('print Ref');
   console.log(reference.data.object.sha);
@@ -135,7 +135,7 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
 
 }
 
-function verifyreCaptcha(req, callback) {
+function verifyreCaptcha(req, res, callback) {
 
   console.log('starting verifyCaptcha function');
 
@@ -143,13 +143,12 @@ function verifyreCaptcha(req, callback) {
   // g-recaptcha-response is the key that browser will generate upon form submit.
   // if its blank or null means user has not selected the captcha, so return the error.
 
-  if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
-    //return res.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
+  console.log("print req body: " + JSON.stringify(req.body));
+
+  if (req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
+    return res.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
     callback(false);
   }
-
-  //TeachOSM
-  //site key: 6LdylbMUAAAAAHuUEVFVmstJkdafdAG9Z0LB6ziN
 
   // Put your secret key here.
   var secretKey = process.env.CAPTCHA_SECRET;
@@ -175,7 +174,7 @@ function verifyreCaptcha(req, callback) {
 // Create form endpoint
 app.post('/posts', function (req, res) {
 
-  verifyreCaptcha(req, function(success) {
+  verifyreCaptcha(req, res, function(success) {
 
           console.log('s3 upload function begins');
 
@@ -189,6 +188,8 @@ app.post('/posts', function (req, res) {
           console.log('print fileName');
           console.log(fileName);
 
+          delete req.body['g-recaptcha-response'];
+
           ymlText2 = YAML.stringify(req.body)
           ymlText2 = ymlText2+'\n---'
 
@@ -199,8 +200,7 @@ app.post('/posts', function (req, res) {
 
           // Setting URL and headers for request
           var buf = new Buffer(ymlText2, "utf-8");
-          const params = { Bucket: 'teachosm-project-posts', Key: keyname, Body: buf, ACL: 'public-read' };
-
+          const params = { Bucket: process.env.PROJECT_POSTS_BUCKET + '-' + process.env.STAGE, Key: keyname, Body: buf, ACL: 'public-read' };
 
           var putObjectPromise = s3.putObject(params).promise();
 
@@ -208,7 +208,7 @@ app.post('/posts', function (req, res) {
             console.log('Success, now do a github commit');
 
             createPullRequest(req, res, buf, {
-              owner: 'GeoSurge',
+              owner: 'd3netxer',
               repo: 'teachosm',
               title: 'pull request via a TeachOSM post',
               body: 'pull request via a TeachOSM post',
