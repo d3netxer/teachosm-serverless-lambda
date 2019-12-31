@@ -150,9 +150,6 @@ function verifyreCaptcha(req, res, callback) {
     callback(false);
   }
 
-  //TeachOSM
-  //site key: 6LdylbMUAAAAAHuUEVFVmstJkdafdAG9Z0LB6ziN
-
   // Put your secret key here.
   var secretKey = process.env.CAPTCHA_SECRET;
 
@@ -190,6 +187,8 @@ app.post('/posts', function (req, res) {
 
           console.log('print fileName');
           console.log(fileName);
+
+          delete req.body['g-recaptcha-response'];
 
           ymlText2 = YAML.stringify(req.body)
           ymlText2 = ymlText2+'\n---'

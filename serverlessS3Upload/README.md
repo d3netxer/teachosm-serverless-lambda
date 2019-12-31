@@ -34,6 +34,15 @@ _Assuming AWS credentials and Serverless are already configured properly._
 
   Et voila!  Your bucket should now have the new file.
 
+### Create an .env file that looks similar to this:
+
+```
+STAGE = deploy
+DEPLOYMENT_BUCKET = teachosm-geosurge-serverless-s3upload
+CONTENT_UPLOADS_BUCKET = teachosm-geosurge-content-uploads
+PICS_UPLOADS_BUCKET = teachosm-geosurge-project-pics
+```
+
 ## Additional Examples
 
 example 1:

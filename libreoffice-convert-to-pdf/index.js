@@ -5,46 +5,6 @@ const {S3} = require('aws-sdk');
 
 require('dotenv').config();
 
-//requiring path and fs modules
-//const path = require('path');
-//const fs = require('fs');
-
-//const zlib = require('zlib');
-
-//console.log("read dir");
-
-//const readStream = fs.createReadStream('/opt/lo.tar.br');
-//const writeStream = fs.createWriteStream('/tmp/lo.tar');
-
-//console.log("Create brotli decompress object");
-// Create brotli decompress object
-//const brotli = zlib.createBrotliDecompress();
-
-//console.log("Pipe the read and write operations with brotli decompression");
-// Pipe the read and write operations with brotli decompression
-//const stream = readStream.pipe(brotli).pipe(writeStream);
-
-//stream.on('finish', () => {
-//  console.log('Done decompressing 😎');
-//});
-
-//joining path of directory 
-//const directoryPath = path.join(__dirname, 'opt');
-//console.log("print dir path: " + directoryPath);
-//passsing directoryPath and callback function
-//fs.readdir("/opt", function (err, files) {
-//    //handling error
-//    if (err) {
-//        return console.log('Unable to scan directory: ' + err);
-//    } 
-    //listing all files using forEach
-//    files.forEach(function (file) {
-        // Do whatever you want to do with the file
-//        console.log(file); 
-//    });
-//});
-
-
 // This code runs only once per Lambda "cold start"
 execSync(`curl https://s3.amazonaws.com/teachosm-geosurge-libreoffice-image-personal/lo.tar.gz -o /tmp/lo.tar.gz && cd /tmp && tar -xf /tmp/lo.tar.gz`);
 // execSync(`tar -xf /tmp/lo.tar`);
