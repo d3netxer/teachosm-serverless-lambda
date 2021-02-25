@@ -208,8 +208,8 @@ app.post('/posts', function (req, res) {
             console.log('Success, now do a github commit');
 
             createPullRequest(req, res, buf, {
-              owner: 'd3netxer',
-              repo: 'teachosm',
+              owner: 'osmus',
+              repo: 'teachosm.org',
               title: 'pull request via a TeachOSM post',
               body: 'pull request via a TeachOSM post',
               head: 'test',
