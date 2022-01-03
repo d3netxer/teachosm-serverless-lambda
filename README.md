@@ -8,16 +8,16 @@ This repo contains a collection of services that process project submissions on 
 
 3. If Google Captcha successful, TeachOSM project page will send up to 3 post requests:
 
--a POST request is sent with the content:
-  -before the POST request the form appends filename with datetime
-  -The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL.
-  -form will then upload content. When the content is uploaded to the content uploads bucket, it will trigger the the **libreoffice-convert-to-pdf lambda** that will do the document conversion and save the outputs to the content bucket.
+- a POST request is sent with the content:
+  - before the POST request the form appends filename with datetime
+  - The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL.
+  - form will then upload content. When the content is uploaded to the content uploads bucket, it will trigger the the **libreoffice-convert-to-pdf lambda** that will do the document conversion and save the outputs to the content bucket.
 
--a POST request is sent with the project pic:
-  -before the POST request the form appends filename with datetime
-  -The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL, then form will upload pic.
+- a POST request is sent with the project pic:
+  - before the POST request the form appends filename with datetime
+  - The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL, then form will upload pic.
 
--a POST request is sent with the metadata, fields will include the project pic filename with datetime appended and the project_file file name with the datetime appended. The **convert-post lambda** function will convert the data into yaml and then save it in a S3 bucket. The this same Lambda function will then make a github pull request with the metadata (markdown with yaml front-matter).
+- a POST request is sent with the metadata, fields will include the project pic filename with datetime appended and the project_file file name with the datetime appended. The **convert-post lambda** function will convert the data into yaml and then save it in a S3 bucket. The this same Lambda function will then make a github pull request with the metadata (markdown with yaml front-matter).
 
 4. Potential feature: On TeachOSM site after successful submission, a message is sent to the user.
 
