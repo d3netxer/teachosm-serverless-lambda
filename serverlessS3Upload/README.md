@@ -20,7 +20,6 @@ There are a plethora of good reasons to use S3 to store your application's file 
 ## Usage
 _Assuming AWS credentials and Serverless are already configured properly._
 - `npm install` the two dependencies.
-- Replace the `[bucketName]` placeholder in both `handler.js` and `serverless.yml` with the desired bucket in which uploads will be stored.
 - `serverless deploy` the service to AWS.
 - `POST` to the API Gateway endpoint to generate a single-use upload link. _N.b. If either of these parameters does not match the file which is uploaded in the next step, S3 will throw an error and refuse the upload._
   - `POST` should have two `x-www-form-urlencoded` parameters:

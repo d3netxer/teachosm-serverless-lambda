@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@octokit/rest": "^16.35.2",
+    "@octokit/rest": "^18.12.0",
     "aws-sdk": "^2.594.0",
     "base-64": "^0.1.0",
     "body-parser": "^1.18.3",

@@ -16,33 +16,25 @@ console.log('This code runs only once per Lambda cold start');
 // This code runs only once per Lambda "cold start"
 //request('https://s3.amazonaws.com/teachosm-geosurge-libreoffice-image-personal/lo.tar.gz').pipe(fs.createWriteStream('/tmp/lo.tar.gz'))
 
-
-
-
-
-
-
-
 //execSync(`cd /tmp && tar -xf /tmp/lo.tar.gz`);
 
 const s3_input = new S3({params: {Bucket: process.env.CONTENT_UPLOADS_BUCKET + '-' + process.env.STAGE}});
 const s3_output = new S3({params: {Bucket: process.env.CONTENT_BUCKET + '-' + process.env.STAGE}});
 
 //converting to pdf
-const convertCommand = `/tmp/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to pdf --outdir /tmp`;
-//const convertCommand = `/tmp/instdir/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to pdf --outdir /tmp`;
+//const convertCommand = `/tmp/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to pdf --outdir /tmp`;
+const convertCommand = `/tmp/instdir/program/soffice.bin --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to pdf --outdir /tmp`;
 // const convertCommand = `/opt/instdir/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to pdf --outdir /tmp`;
 
 //converting to docx
-const convertCommand_docx = `/tmp/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to docx --outdir /tmp`;
-// const convertCommand_docx = `/opt/instdir/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to docx --outdir /tmp`;
+//const convertCommand_docx = `/tmp/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to docx --outdir /tmp`;
+const convertCommand_docx = `/tmp/instdir/program/soffice.bin --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to docx --outdir /tmp`;
+//const convertCommand_docx = `/opt/instdir/program/soffice --headless --invisible --nodefault --nofirststartwizard --nolockcheck --nologo --norestore --convert-to docx --outdir /tmp`;
 
 //exports.handler = async ({filename}) => {
 exports.handler = async (event) => {
 
-
-
-    var req = https.get('https://s3.amazonaws.com/teachosm-geosurge-libreoffice-image-personal/lo.tar.gz');
+    var req = https.get('https://teachosm-geosurge-libreoffice-image-personal.s3.amazonaws.com/lo.tar.gz');
     req.on('response', function(res) {
         res
             .pipe(zlib.createGunzip())
@@ -63,12 +55,13 @@ exports.handler = async (event) => {
     });
 
 
-
-
   console.log('print event');
   console.log(event['Records'][0]['s3']['object']['key']);
   var filename;
   filename = event['Records'][0]['s3']['object']['key'];
+
+  console.log('print s3_input');
+  console.log(s3_input);
   
   const {Body: inputFileBuffer} = await s3_input.getObject({Key: filename}).promise();
   fs.writeFileSync(`/tmp/${filename}`, inputFileBuffer);

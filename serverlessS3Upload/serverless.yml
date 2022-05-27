@@ -1,4 +1,5 @@
 service: teachosm-geosurge-image-upload
+useDotenv: true
 
 plugins:
   - serverless-dotenv-plugin
@@ -6,20 +7,20 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs8.10
-  stage: ${env:STAGE}
+  runtime: nodejs16.x
+  stage: ${opt:stage}
   deploymentBucket:
-    name: teachosm-geosurge-serverless-s3upload-${env:STAGE}
+    name: teachosm-geosurge-serverless-s3upload-${opt:stage}
   # Provide permissions for this service to manipulate S3.
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::${env:CONTENT_UPLOADS_BUCKET}-${env:STAGE}/*"
+      Resource: "arn:aws:s3:::teachosm-geosurge-content-uploads-${opt:stage}/*"
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::${env:PICS_UPLOADS_BUCKET}-${env:STAGE}/*"
+      Resource: "arn:aws:s3:::teachosm-geosurge-project-pics-${opt:stage}/*"
 
 
 # Expose function to public API for POST requests.

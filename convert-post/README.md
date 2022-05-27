@@ -10,6 +10,8 @@ CAPTCHA_SECRET = {{secret}}
 STAGE = deploy
 DEPLOYMENT_BUCKET = teachosm-geosurge-convert-post-request-to-yaml
 PROJECT_POSTS_BUCKET = teachosm-geosurge-project-posts
+OWNER = {{github repo owner}}
+REPO = {{github repo name}}
 ```
 
 ## sample curl command

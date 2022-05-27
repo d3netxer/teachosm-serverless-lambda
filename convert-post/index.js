@@ -18,7 +18,8 @@ var Promise = require('promise');
 
 require('dotenv').config();
 
-const Octokit = require('@octokit/rest')
+//const Octokit = require('@octokit/rest')
+const { Octokit } = require("@octokit/rest");
 
 var base64 = require('base-64');
 
@@ -65,7 +66,8 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
   }
 
   const octokit = new Octokit({
-      auth: process.env.GITHUB_KEY
+      auth: process.env.GITHUB_KEY,
+      userAgent:'d3netxer'
     });
 
   let response = await octokit.repos.get({ owner, repo })
@@ -94,12 +96,13 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
   console.log('print branch');
   console.log(branch);
 
-  createRef_response = await octokit.git.createRef({
+  //https://octokit.github.io/rest.js/v18#git-create-ref
+  createRef_response = await octokit.rest.git.createRef({
     owner,
     repo,
     ref: ref+branch,
     sha: sha_latest_commit
-  })
+  }).catch((err) => { console.error(err); });
 
   console.log('print createRef_response');
   console.log(createRef_response);
@@ -108,8 +111,8 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
   console.log('createFile');
   //will get an Invalid request if file already exists
 
-
-  response = await octokit.repos.createFile({
+  //https://octokit.github.io/rest.js/v18#repos-create-or-update-file-contents
+  response = await octokit.repos.createOrUpdateFileContents({
     owner,
     repo,
     branch: branch,
@@ -199,7 +202,8 @@ app.post('/posts', function (req, res) {
           //All requests made through the SDK are asynchronous
 
           // Setting URL and headers for request
-          var buf = new Buffer(ymlText2, "utf-8");
+          //var buf = new Buffer(ymlText2, "utf-8");
+          var buf = Buffer.from(ymlText2, "utf-8"); 
           const params = { Bucket: process.env.PROJECT_POSTS_BUCKET + '-' + process.env.STAGE, Key: keyname, Body: buf, ACL: 'public-read' };
 
           var putObjectPromise = s3.putObject(params).promise();
@@ -208,8 +212,8 @@ app.post('/posts', function (req, res) {
             console.log('Success, now do a github commit');
 
             createPullRequest(req, res, buf, {
-              owner: 'osmus',
-              repo: 'teachosm.org',
+              owner: process.env.OWNER, //owner: 'osmus',
+              repo: process.env.REPO, //repo: 'teachosm.org',
               title: 'pull request via a TeachOSM post',
               body: 'pull request via a TeachOSM post',
               head: 'test',
