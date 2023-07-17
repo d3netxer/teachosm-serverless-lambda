@@ -98,13 +98,9 @@ cors.json:
 }
 ```
 
-#### Extra instructions to load the libreoffice image
+#### Extra instructions
 
-- upload lo.tar.gz (https://github.com/vladgolubev/serverless-libreoffice/releases) manually to teachosm-geosurge-libreoffice-image-{stage} bucket
-- add Public Access with Read object access to file:
-```
-aws s3api put-object-acl --bucket teachosm-geosurge-libreoffice-image-{stage} --key lo.tar.gz --acl public-read
-```
+The **convert-pdf-to-doc** and **libreoffice-convert-to-pdf** lambdas use container images (https://www.serverless.com/blog/container-support-for-lambda). 
 
 ### Deploy functions using Serverless
 
@@ -134,6 +130,9 @@ npm install uuid --save
 ```
 and you see it gets added into the package.json
 
+#### Tips
+
+- If you are testing locally and encounter CORs errors, try opening a new window in incognito mode
 
 ### useful tutorials
 https://serverless.com/blog/serverless-express-rest-api/
