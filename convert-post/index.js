@@ -3,23 +3,27 @@
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const express = require('express');
-var request = require('request');
+const axios = require('axios').default;
 var cors = require('cors')
 const app = express();
 const AWS = require('aws-sdk');
 var fs = require('fs');
+const _ = require('lodash');
 
 const IS_OFFLINE = process.env.IS_OFFLINE;
 
-const uuidV1 = require('uuid/v1');
+const { v4: uuidv4 } = require('uuid');
+
 var YAML = require('json2yaml');
 
 var Promise = require('promise');
 
 require('dotenv').config();
 
-//const Octokit = require('@octokit/rest')
 const { Octokit } = require("@octokit/rest");
+
+// https://github.com/octokit/request-error.js/
+const { RequestError } = require("@octokit/request-error");
 
 var base64 = require('base-64');
 
@@ -70,7 +74,31 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
       userAgent:'d3netxer'
     });
 
-  let response = await octokit.repos.get({ owner, repo })
+
+  console.log('trying to get repo3');
+
+  console.log(owner);
+  console.log(repo);
+
+  let response; // Declare response outside the try block
+  try {
+    response = await octokit.repos.get({ owner, repo })
+  } catch (error) {
+    // Octokit errors always have a `error.status` property which is the http response code
+    if (error.status) {
+      // handle Octokit error
+      console.log(error.status);
+      console.log(error)
+    } else {
+      // handle all other errors
+      throw error;
+    }
+  }
+
+  // Now you can use response here
+  console.log(response);
+
+  console.log('done getting repo');
 
   if (!base) {
     base = response.data.default_branch
@@ -78,11 +106,24 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
 
   console.log('getRef');
 
-  let reference = await octokit.git.getRef({
-            owner,
-            repo,
-            ref: 'heads/master'
-        }).catch((err) => { console.error(err); });
+  let reference;
+  try {
+    reference = await octokit.git.getRef({
+      owner,
+      repo,
+      ref: 'heads/master'
+    });
+  } catch (error) {
+    // Octokit errors always have a `error.status` property which is the http response code
+    if (error.status) {
+      // handle Octokit error
+      console.log(error.status);
+    } else {
+      // handle all other errors
+      throw error;
+    }
+  }
+
 
   console.log('print Ref');
   console.log(reference.data.object.sha);
@@ -102,7 +143,7 @@ async function createPullRequest(req, res, buf, { owner, repo, title, body, base
     repo,
     ref: ref+branch,
     sha: sha_latest_commit
-  }).catch((err) => { console.error(err); });
+  });
 
   console.log('print createRef_response');
   console.log(createRef_response);
@@ -163,13 +204,20 @@ function verifyreCaptcha(req, res, callback) {
   console.log('print verificationUrl');
   console.log(verificationUrl);
 
-  request(verificationUrl,function(error,response,body) {
-      body = JSON.parse(body);
+  axios.get(verificationUrl)
+    .then(function(response) {
+      let body = response.data;
       console.log("print body1");
+      //body = JSON.parse(body);
+      //console.log("print body2");
       console.log(body);
       //return body;
       callback(body);
-  });
+    })
+    .catch(function (error) {
+      console.log('error:', error);
+    });
+
 
 }
 
@@ -182,16 +230,30 @@ app.post('/posts', function (req, res) {
           console.log('s3 upload function begins');
 
           console.log('file name');
-          const Id = uuidV1();
+          const Id = uuidv4();
           //var keyname = 'post_' + req.body.username + '_' + Id + '.md';
           var keyname = req.body.url + '.md';
 
           var fileName = keyname.split(".")[0];
 
-          console.log('print fileName');
+          console.log('print fileName2');
           console.log(fileName);
 
           delete req.body['g-recaptcha-response'];
+
+          //apply transformations
+          _.forOwn(req.body, function(value, key) {
+            // escape HTML special characters
+            //value = _.escape(value);
+        
+            // replace newlines with <br/>
+            //value = value.replace(/\n/g, '<br/>');
+
+            // encode the value
+            value = encodeURI(value);
+        
+            req.body[key] = value;
+          });
 
           ymlText2 = YAML.stringify(req.body)
           ymlText2 = ymlText2+'\n---'

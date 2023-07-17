@@ -12,15 +12,17 @@ provider:
   deploymentBucket:
     name: teachosm-geosurge-serverless-s3upload-${opt:stage}
   # Provide permissions for this service to manipulate S3.
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "s3:*"
-      Resource: "arn:aws:s3:::teachosm-geosurge-content-uploads-${opt:stage}/*"
-    - Effect: "Allow"
-      Action:
-        - "s3:*"
-      Resource: "arn:aws:s3:::teachosm-geosurge-project-pics-${opt:stage}/*"
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::teachosm-geosurge-content-uploads-${opt:stage}/*"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::teachosm-geosurge-project-pics-${opt:stage}/*"
 
 
 # Expose function to public API for POST requests.

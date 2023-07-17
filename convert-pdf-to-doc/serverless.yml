@@ -1,0 +1,56 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+
+configValidationMode: warn
+
+useDotenv: true
+
+service: pdf-to-doc
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  ecr:
+    # In this section you can define images that will be built locally and uploaded to ECR
+    images:
+      pdf_to_doc:
+        path: ./
+        platform: linux/amd64
+  stage: ${opt:stage, 'dev'}
+  architecture: arm64
+  memorySize: 4056 # optional, in MB, default is 1024
+  timeout: 400 # optional, in seconds, default is 6
+  environment:
+    CONTENT_UPLOADS_BUCKET: ${env:CONTENT_UPLOADS_BUCKET}
+    STAGE: ${env:STAGE}
+  deploymentBucket:
+    name: teachosm-geosurge-pdf-to-doc-${opt:stage}
+  region: us-east-1
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Resource: "*"
+          Action:
+            - "sns:*"
+        - Effect: "Allow"
+          Resource: "*"
+          Action:
+            - "s3:*"
+
+package:
+  patterns:
+    - '!for_reference/**'
+    - '!node_modules/**'
+    - '!venv/**'
+
+functions:
+  pdf_to_doc:
+    image:
+      name: pdf_to_doc
+    events:
+    - sns: pdf-to-doc-topic # created immediately

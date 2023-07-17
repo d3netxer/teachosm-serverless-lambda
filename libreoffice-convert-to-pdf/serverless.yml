@@ -8,25 +8,51 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  ecr:
+    # In this section you can define images that will be built locally and uploaded to ECR
+    images:
+      convert-to-pdf:
+        path: ./
+        platform: linux/amd64
+  #runtime: nodejs16.x
   stage: ${opt:stage}
+  memorySize: 5120 # optional, in MB, default is 1024
+  timeout: 600 # optional, in seconds, default is 6
+  environment:
+    STAGE: ${self:provider.stage}
+    HOME: /tmp
   deploymentBucket:
     name: ${env:DEPLOYMENT_BUCKET}-${opt:stage}
   region: us-east-1
+
   # Provide permissions for this service to manipulate S3.
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "s3:*"
-      Resource: "arn:aws:s3:::${env:CONTENT_UPLOADS_BUCKET}-${opt:stage}/*"
-    - Effect: "Allow"
-      Action:
-        - "s3:*"
-      Resource: "arn:aws:s3:::${env:CONTENT_BUCKET}-${opt:stage}/*"
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::${env:CONTENT_UPLOADS_BUCKET}-${opt:stage}/*"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::${env:CONTENT_BUCKET}-${opt:stage}/*"
+        - Effect: "Allow"
+          Action:
+            - "sns:*"
+          Resource: "arn:aws:s3:::${env:CONTENT_BUCKET}-${opt:stage}/*"
+        - Effect: "Allow"
+          Action:
+            - "sns:*"
+          Resource: 
+            - "arn:aws:sns:${env:region}:${env:accountid}:${env:snstopic}"
 
 functions:
   convert-to-pdf:
-    handler: index.handler
+    image:
+        name: convert-to-pdf
+    #image: 964564380474.dkr.ecr.us-east-1.amazonaws.com/libreoffice-lambda:latest
+    #handler: index.handler
     #layers:
     #  - arn:aws:lambda:us-east-1:764866452798:layer:libreoffice:8
     events:

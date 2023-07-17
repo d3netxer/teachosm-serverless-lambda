@@ -2,22 +2,22 @@
 
 This repo contains a collection of services that process project submissions on the TeachOSM website.
 
-## TeachOSM submit project steps:
+## TeachOSM website submit project steps:
 
-1. User hits submit form button and the Lambda processes Google Captcha
+1. User hits submit form button and the **convert-post** Lambda processes Google Captcha
 
-3. If Google Captcha successful, TeachOSM project page will send up to 3 post requests:
+3. If Google Captcha is successful, the TeachOSM project page will send up to 3 post requests:
 
 - a POST request is sent with the content:
   - before the POST request the form appends filename with datetime
   - The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL.
-  - form will then upload content. When the content is uploaded to the content uploads bucket, it will trigger the the **libreoffice-convert-to-pdf lambda** that will do the document conversion and save the outputs to the content bucket.
+  - form will then upload content. When the content is uploaded to the content uploads bucket, it will trigger the the **libreoffice-convert-to-pdf lambda** that will do the document conversion and save the outputs to the content bucket. If the uploaded content is a doc file, then the **libreoffice-convert-to-pdf lambda** function will also make a SNS notification to trigger the **convert-pdf-to-doc** lambda function.
 
 - a POST request is sent with the project pic:
   - before the POST request the form appends filename with datetime
-  - The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL, then form will upload pic.
+  - The **serverlessS3Upload lambda** will save file in S3 bucket by returning back a signedURL, then form will upload pic. When the pic is uploaded to the PICS_UPLOADS_BUCKET it will trigger the **aws-s3-thumbnail-generator** bucket that will convert and create a thumnbail version of the pic in the same bucket.
 
-- a POST request is sent with the metadata, fields will include the project pic filename with datetime appended and the project_file file name with the datetime appended. The **convert-post lambda** function will convert the data into yaml and then save it in a S3 bucket. The this same Lambda function will then make a github pull request with the metadata (markdown with yaml front-matter).
+- a POST request is sent with the metadata, fields will include the project pic filename with datetime appended and the project_file file name with the datetime appended. The **convert-post lambda** function will convert the data into yaml and then save it in a S3 bucket. This same Lambda function will then make a github pull request with the metadata (markdown with yaml front-matter).
 
 4. Potential feature: On TeachOSM site after successful submission, a message is sent to the user.
 
@@ -108,7 +108,7 @@ aws s3api put-object-acl --bucket teachosm-geosurge-libreoffice-image-{stage} --
 
 ### Deploy functions using Serverless
 
-deploy using Serverless within each lambda function's directory. Within each folder do an 'npm install'. Also install the Serverless Framework on your computer. Make sure you are using the same version of node the matches what is in the serverless.yml file. Your AWS account needs the appropriate IAM permissions to deploy, here is an example of a permissions [policy that works](https://gist.github.com/d3netxer/b1d1a4012d6bf20b910c22d02ee43a80)
+Deploy using Serverless within each lambda function's directory. Within each folder do an 'npm install'. Also install the Serverless Framework on your computer. Make sure you are using the same version of node the matches what is in the serverless.yml file. Your AWS account needs the appropriate IAM permissions to deploy, here is an example of a permissions [policy that works](https://gist.github.com/d3netxer/b1d1a4012d6bf20b910c22d02ee43a80)
 
 View the README within each directory for additional details. You should create an .env file within each directory that has important settings. The Serverless command will typically have an aws-profile tag, which specifies which AWS account you are deploying to and a stage tag, which corresponds to your bucket names.
 

@@ -1,7 +1,13 @@
 # serverless.yml
 
+configValidationMode: warn
+
 service: teachosm-geosurge-convert-post
 useDotenv: true
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '3'
 
 plugins:
   - serverless-dotenv-plugin
@@ -18,11 +24,13 @@ provider:
     name: ${env:DEPLOYMENT_BUCKET}-${opt:stage}
   region: us-east-1
   # Provide permissions for this service to manipulate S3.
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "s3:*"
-      Resource: "arn:aws:s3:::${env:PROJECT_POSTS_BUCKET}-${opt:stage}/*"
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::${env:PROJECT_POSTS_BUCKET}-${opt:stage}/*"
 
 functions:
   app:

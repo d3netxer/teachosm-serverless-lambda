@@ -1,0 +1,3 @@
+[submodule "aws-s3-thumbnail-generator"]
+	path = aws-s3-thumbnail-generator
+	url = https://github.com/d3netxer/aws-s3-thumbnail-generator

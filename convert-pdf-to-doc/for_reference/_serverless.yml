@@ -1,0 +1,42 @@
+# serverless.yml
+
+service: teachosm-geosurge-libreoffice
+useDotenv: true
+
+plugins:
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: ${opt:stage}
+  deploymentBucket:
+    name: ${env:DEPLOYMENT_BUCKET}-${opt:stage}
+  region: us-east-1
+  # Provide permissions for this service to manipulate S3.
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::${env:CONTENT_UPLOADS_BUCKET}-${opt:stage}/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::${env:CONTENT_BUCKET}-${opt:stage}/*"
+
+functions:
+  convert-to-pdf:
+    handler: index.handler
+    #layers:
+    #  - arn:aws:lambda:us-east-1:764866452798:layer:libreoffice:8
+    events:
+      - s3:
+          bucket: ${env:CONTENT_UPLOADS_BUCKET}-${opt:stage}
+          event: s3:ObjectCreated:*
+          existing: true
+
+
+
+
+
+
